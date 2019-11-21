@@ -1,9 +1,12 @@
 import React from 'react'
-import { Department, Phone } from '../models'
+import { Department } from '../models'
 import { PhoneList } from './PhoneList';
 import { PhoneEditor } from './PhoneEditor';
+import { AccountsRepository } from '../api';
 
 export class AccountEditor extends React.Component {
+
+    accountsRepository = new AccountsRepository();
 
     departments = [
         new Department(1, "Recruiting"), 
@@ -18,10 +21,7 @@ export class AccountEditor extends React.Component {
         email: '',
         isEmployee: false,
         departmentId: 0,
-        phoneNumbers: [
-            new Phone('214-555-1212', 'fax'),
-            new Phone('214-444-FILM', 'home')
-        ]
+        phoneNumbers: []
     }
 
     render() {
@@ -92,6 +92,12 @@ export class AccountEditor extends React.Component {
 
             </form>
          </>
+    }
+
+    componentDidMount() {
+        let accountId = 1;
+        this.accountsRepository.getAccountById(accountId)
+            .then(account => this.setState(account));
     }
 
     onPhoneAdded(phone) {
