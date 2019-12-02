@@ -3,6 +3,7 @@ import { Department } from '../models'
 import { PhoneList } from './PhoneList';
 import { PhoneEditor } from './PhoneEditor';
 import { AccountsRepository } from '../api';
+import { Link, Redirect } from 'react-router-dom';
 
 export class AccountEditor extends React.Component {
 
@@ -21,11 +22,15 @@ export class AccountEditor extends React.Component {
         email: '',
         isEmployee: false,
         departmentId: 0,
-        phoneNumbers: []
+        phoneNumbers: [],
+        redirect: undefined
     }
 
     render() {
+
+
         return <>
+            { this.state.redirect && <Redirect to="/" /> }
             <form className="container">
                 <h1>Account Editor</h1>
                 <div className="form-group">
@@ -68,7 +73,8 @@ export class AccountEditor extends React.Component {
 
                 </div>
 
-                <div className="form-group">
+                <div className="form-group"
+                    style={{ "display": this.state.isEmployee ? "block" : "none" }}>
                     <label htmlFor="departmentId">
                         Department
                     </label>
@@ -90,14 +96,26 @@ export class AccountEditor extends React.Component {
                 <PhoneList phoneNumbers={ this.state.phoneNumbers }/>
                 <PhoneEditor onPhoneAdded={ x => this.onPhoneAdded(x)} />
 
+                <div>
+                    <button type="button" className="btn btn-primary btn-lg btn-block" onClick={ e => this.onSubmit() }>
+                        Save
+                    </button>
+                    <Link className="btn btn-secondary btn-block" to="/">
+                        Return to List
+                    </Link>
+                </div>
+
             </form>
          </>
     }
 
     componentDidMount() {
-        let accountId = 1;
+        let accountId = this.props.match.params.accountId;
+        if(accountId) {
         this.accountsRepository.getAccountById(accountId)
             .then(account => this.setState(account));
+        }
+
     }
 
     onPhoneAdded(phone) {
@@ -105,6 +123,17 @@ export class AccountEditor extends React.Component {
             prevState.phoneNumbers.push(phone);
             return prevState;
         });
+    }
+
+    onSubmit() {
+        var onSaveComplete = () => this.setState({ redirect: true });
+        if (this.state.id) {
+            this.accountsRepository
+            .updateAccount(this.state.id, this.state).then(onSaveComplete);
+        } else {
+            this.accountsRepository
+                .addAccount(this.state).then(onSaveComplete);
+        }
     }
 
 }

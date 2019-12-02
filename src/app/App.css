@@ -1,0 +1,26 @@
+.question {
+    margin: 10px;
+}
+
+.madlib {
+    background-color: lightblue;
+    border: 1px solid lightgray;
+    box-shadow: 2px 2px 2px lightgray;
+}
+
+.bold {
+    font-weight: bold;
+    color: darkred;
+}
+
+.questionsBody {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background-color: lightgoldenrodyellow;
+}
+
+.madTitle {
+    position: relative;
+    text-align: center;
+    text-decoration: underline;
+}
